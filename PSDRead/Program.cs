@@ -19,9 +19,9 @@ namespace PSDRead
                 Console.WriteLine("Image resource ID: {0}", res.ID);
                 Console.WriteLine("  Name: {0}", res.Name);
 
-                if (res.ID == 1005)
+                if (res.ID == ResolutionInfo.ResolutionInfoResourceID)
                 {
-                    Console.WriteLine("  Data:");
+                    Console.WriteLine("  Binary data:");
 
                     for (int rowOffset = 0; rowOffset < res.Data.Length; rowOffset += 8)
                     {
@@ -32,6 +32,15 @@ namespace PSDRead
                         }
                         Console.WriteLine();
                     }
+
+                    Console.WriteLine("  Resolution info:");
+                    var resInfo = new ResolutionInfo(res);
+                    Console.WriteLine("    Horizontal resolution: {0} dpi", resInfo.HorizontalResolutionDPI);
+                    Console.WriteLine("      Display unit:        {0}", resInfo.HorizontalResolutionDisplayUnit);
+                    Console.WriteLine("    Width display unit:    {0}", resInfo.WidthDisplayUnit);
+                    Console.WriteLine("    Vertical resolution:   {0} dpi", resInfo.VerticalResolutionDPI);
+                    Console.WriteLine("      Display unit:        {0}", resInfo.VerticalResolutionDisplayUnit);
+                    Console.WriteLine("    Height display unit:   {0}", resInfo.HeightDisplayUnit);
                 }
             }
         }
