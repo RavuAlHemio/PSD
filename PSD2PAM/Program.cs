@@ -24,6 +24,15 @@ namespace PSD2PAM
             {
                 photochop.Read(reading);
 
+                var versionInfo = photochop.ImageResources.FirstOrDefault(ir => ir.ID == 0x0421);
+                if (versionInfo?.Data[4] == 0)
+                {
+                    // does not have valid precomposed image
+                    Console.WriteLine("PSD2PAM requires that a valid precomposed image is part of the file.");
+                    Environment.ExitCode = 1;
+                    return;
+                }
+
                 int width = photochop.Width;
                 int height = photochop.Height;
                 int channelCount = photochop.NumberOfChannels;
