@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSDTests", "PSDTests\PSDTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSDRead", "PSDRead\PSDRead.csproj", "{F810BFBE-6370-40ED-B2B2-C32C55C7EBB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSD2PAM", "PSD2PAM\PSD2PAM.csproj", "{BF061AE4-0E86-45E0-9465-5A774C1BE3B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F810BFBE-6370-40ED-B2B2-C32C55C7EBB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F810BFBE-6370-40ED-B2B2-C32C55C7EBB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F810BFBE-6370-40ED-B2B2-C32C55C7EBB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF061AE4-0E86-45E0-9465-5A774C1BE3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF061AE4-0E86-45E0-9465-5A774C1BE3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF061AE4-0E86-45E0-9465-5A774C1BE3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF061AE4-0E86-45E0-9465-5A774C1BE3B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

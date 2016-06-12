@@ -21,9 +21,16 @@ namespace RavuAlHemio.PSD
                     : buf.Length;
 
                 int read = source.Read(buf, 0, maxToCopy);
-                if (read == 0 && length.HasValue)
+                if (read == 0)
                 {
-                    throw new EndOfStreamException();
+                    if (length.HasValue)
+                    {
+                        throw new EndOfStreamException();
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 dest.Write(buf, 0, read);
                 totalCopied += read;
