@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace RavuAlHemio.PSD
 {
@@ -30,68 +31,65 @@ namespace RavuAlHemio.PSD
         public ResolutionDisplayUnit VerticalResolutionDisplayUnit { get; set; }
         public SizeDisplayUnit HeightDisplayUnit { get; set; }
 
-        public ResolutionInfo()
+        public static ResolutionInfo FromPSD(PSDFile psd)
         {
-        }
-
-        public ResolutionInfo(PSDImageResource resolutionResource)
-        {
-            if (resolutionResource.ID != ResolutionInfoResourceID)
+            var resource = psd.ImageResources.FirstOrDefault(ir => ir.ID == ResolutionInfoResourceID);
+            if (resource == null)
             {
-                throw new ArgumentException(
-                    $"{nameof(resolutionResource.ID)} must be {ResolutionInfoResourceID}, not {resolutionResource.ID}",
-                    nameof(resolutionResource)
-                );
+                return null;
             }
 
-            using (var ms = new MemoryStream(resolutionResource.Data, writable: false))
+            var resInfo = new ResolutionInfo();
+            using (var ms = new MemoryStream(resource.Data, writable: false))
             {
                 int horizontalResolutionDPIFixedPoint = ms.ReadBigEndianInt32();
-                HorizontalResolutionDPI = horizontalResolutionDPIFixedPoint/FixedPointDivisor;
-                if (HorizontalResolutionDPI <= 0.0)
+                resInfo.HorizontalResolutionDPI = horizontalResolutionDPIFixedPoint / FixedPointDivisor;
+                if (resInfo.HorizontalResolutionDPI <= 0.0)
                 {
-                    throw new PSDFormatException($"horizontal resolution is {HorizontalResolutionDPI}, expected more than 0.0");
+                    throw new PSDFormatException($"horizontal resolution is {resInfo.HorizontalResolutionDPI}, expected more than 0.0");
                 }
 
-                HorizontalResolutionDisplayUnit = (ResolutionDisplayUnit) ms.ReadBigEndianInt16();
-                if (!Enum.IsDefined(typeof(ResolutionDisplayUnit), HorizontalResolutionDisplayUnit))
+                resInfo.HorizontalResolutionDisplayUnit = (ResolutionDisplayUnit)ms.ReadBigEndianInt16();
+                if (!Enum.IsDefined(typeof(ResolutionDisplayUnit), resInfo.HorizontalResolutionDisplayUnit))
                 {
                     throw new PSDFormatException(
-                        $"horizontal resolution display unit is {HorizontalResolutionDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<ResolutionDisplayUnit, short>())}"
+                        $"horizontal resolution display unit is {resInfo.HorizontalResolutionDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<ResolutionDisplayUnit, short>())}"
                     );
                 }
 
-                WidthDisplayUnit = (SizeDisplayUnit) ms.ReadBigEndianInt16();
-                if (!Enum.IsDefined(typeof(SizeDisplayUnit), WidthDisplayUnit))
+                resInfo.WidthDisplayUnit = (SizeDisplayUnit)ms.ReadBigEndianInt16();
+                if (!Enum.IsDefined(typeof(SizeDisplayUnit), resInfo.WidthDisplayUnit))
                 {
                     throw new PSDFormatException(
-                        $"width display unit is {WidthDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<SizeDisplayUnit, short>())}"
+                        $"width display unit is {resInfo.WidthDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<SizeDisplayUnit, short>())}"
                     );
                 }
 
                 int verticalResolutionDPIFixedPoint = ms.ReadBigEndianInt32();
-                VerticalResolutionDPI = verticalResolutionDPIFixedPoint / FixedPointDivisor;
-                if (VerticalResolutionDPI <= 0.0)
+                resInfo.VerticalResolutionDPI = verticalResolutionDPIFixedPoint / FixedPointDivisor;
+                if (resInfo.VerticalResolutionDPI <= 0.0)
                 {
-                    throw new PSDFormatException($"vertical resolution is {VerticalResolutionDPI}, expected more than 0.0");
+                    throw new PSDFormatException($"vertical resolution is {resInfo.VerticalResolutionDPI}, expected more than 0.0");
                 }
 
-                VerticalResolutionDisplayUnit = (ResolutionDisplayUnit)ms.ReadBigEndianInt16();
-                if (!Enum.IsDefined(typeof(ResolutionDisplayUnit), VerticalResolutionDisplayUnit))
+                resInfo.VerticalResolutionDisplayUnit = (ResolutionDisplayUnit)ms.ReadBigEndianInt16();
+                if (!Enum.IsDefined(typeof(ResolutionDisplayUnit), resInfo.VerticalResolutionDisplayUnit))
                 {
                     throw new PSDFormatException(
-                        $"vertical resolution display unit is {VerticalResolutionDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<ResolutionDisplayUnit, short>())}"
+                        $"vertical resolution display unit is {resInfo.VerticalResolutionDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<ResolutionDisplayUnit, short>())}"
                     );
                 }
 
-                HeightDisplayUnit = (SizeDisplayUnit)ms.ReadBigEndianInt16();
-                if (!Enum.IsDefined(typeof(SizeDisplayUnit), HeightDisplayUnit))
+                resInfo.HeightDisplayUnit = (SizeDisplayUnit)ms.ReadBigEndianInt16();
+                if (!Enum.IsDefined(typeof(SizeDisplayUnit), resInfo.HeightDisplayUnit))
                 {
                     throw new PSDFormatException(
-                        $"height display unit is {HeightDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<SizeDisplayUnit, short>())}"
+                        $"height display unit is {resInfo.HeightDisplayUnit}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<SizeDisplayUnit, short>())}"
                     );
                 }
             }
+
+            return resInfo;
         }
     }
 }

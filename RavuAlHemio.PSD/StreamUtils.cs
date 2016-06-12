@@ -194,6 +194,19 @@ namespace RavuAlHemio.PSD
             return str;
         }
 
+        public static string ReadUnicodeString(this Stream stream)
+        {
+            int length = stream.ReadBigEndianInt32();
+            char[] chars = new char[length];
+
+            for (int i = 0; i < length; ++i)
+            {
+                chars[i] = (char)stream.ReadBigEndianUInt16();
+            }
+
+            return new string(chars);
+        }
+
         public static float ReadBigEndianSingle(this Stream stream)
         {
             uint bytesAsInteger = stream.ReadBigEndianUInt32();

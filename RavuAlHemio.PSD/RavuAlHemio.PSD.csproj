@@ -57,6 +57,7 @@
     <Compile Include="PSDLayerChannel.cs" />
     <Compile Include="PSDLayerChannelDataPlaceholder.cs" />
     <Compile Include="PSDLayerMask.cs" />
+    <Compile Include="VersionInfo.cs" />
     <Compile Include="ResolutionInfo.cs" />
     <Compile Include="StreamUtils.cs" />
   </ItemGroup>

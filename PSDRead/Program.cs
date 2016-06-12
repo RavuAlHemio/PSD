@@ -42,7 +42,7 @@ namespace PSDRead
                     }
 
                     Console.WriteLine("    Resolution info:");
-                    var resInfo = new ResolutionInfo(res);
+                    var resInfo = ResolutionInfo.FromPSD(psd);
                     Console.WriteLine("      Horizontal resolution: {0} dpi", resInfo.HorizontalResolutionDPI);
                     Console.WriteLine("        Display unit:        {0}", resInfo.HorizontalResolutionDisplayUnit);
                     Console.WriteLine("      Width display unit:    {0}", resInfo.WidthDisplayUnit);
@@ -50,22 +50,32 @@ namespace PSDRead
                     Console.WriteLine("        Display unit:        {0}", resInfo.VerticalResolutionDisplayUnit);
                     Console.WriteLine("      Height display unit:   {0}", resInfo.HeightDisplayUnit);
                 }
+                else if (res.ID == VersionInfo.VersionInfoResourceID)
+                {
+                    var verInfo = VersionInfo.FromPSD(psd);
+                    Console.WriteLine("    Version info:");
+                    Console.WriteLine("      Version: {0}", verInfo.Version);
+                    Console.WriteLine("      {0} valid precomposed data", verInfo.HasValidPrecomposedData ? "Has" : "Does not have");
+                    Console.WriteLine("      Writer: {0}", verInfo.WriterName);
+                    Console.WriteLine("      Reader: {0}", verInfo.ReaderName);
+                    Console.WriteLine("      File version: {0}", verInfo.FileVersion);
+                }
             }
             
             Console.WriteLine("Layers: {0}", psd.Layers.Length);
             foreach (PSDLayer layer in psd.Layers)
             {
                 Console.WriteLine("    Layer: {0}", layer.Name);
-                Console.WriteLine("    Channels: {0}", layer.Channels.Length);
+                Console.WriteLine("      Channels: {0}", layer.Channels.Length);
                 foreach (PSDLayerChannel chan in layer.Channels)
                 {
-                    Console.WriteLine("      {0} ({1} bytes {2} from 0x{3:x})", chan.ID, chan.Data.DataLength, chan.Data.Compression, chan.Data.Offset);
+                    Console.WriteLine("        {0} ({1} bytes {2} from 0x{3:x})", chan.ID, chan.Data.DataLength, chan.Data.Compression, chan.Data.Offset);
                 }
-                Console.WriteLine("    Additional layer information: {0} entries", layer.AdditionalInformation.Count);
+                Console.WriteLine("      Additional layer information: {0} entries", layer.AdditionalInformation.Count);
                 foreach (PSDAdditionalLayerInformation pali in layer.AdditionalInformation)
                 {
-                    Console.WriteLine("      Key: {0}", pali.Key);
-                    Console.WriteLine("      Data length: {0}", pali.Data.Length);
+                    Console.WriteLine("        Key: {0}", pali.Key);
+                    Console.WriteLine("          Data length: {0}", pali.Data.Length);
                 }
             }
 
@@ -86,8 +96,7 @@ namespace PSDRead
             Console.WriteLine("Additional layer information: {0} entries", psd.AdditionalLayerInformation.Count);
             foreach (PSDAdditionalLayerInformation ali in psd.AdditionalLayerInformation)
             {
-                Console.WriteLine("  Additional layer information entry:");
-                Console.WriteLine("    Key: {0}", ali.Key);
+                Console.WriteLine("  Key: {0}", ali.Key);
                 Console.WriteLine("    Data length: {0}", ali.Data.Length);
             }
 
