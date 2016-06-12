@@ -166,6 +166,13 @@ namespace RavuAlHemio.PSD
             return new string(chars);
         }
 
+        public static string ReadWindows1252String(this Stream stream, int byteCount)
+        {
+            var bytes = stream.ReadBytes(byteCount);
+            var coding = Encoding.GetEncoding("windows-1252");
+            return coding.GetString(bytes, 0, bytes.Length);
+        }
+
         public static string ReadUsAsciiPascalStringPaddedToEven(this Stream stream)
         {
             // get length (1 byte)

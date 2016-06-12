@@ -88,7 +88,7 @@ namespace RavuAlHemio.PSD
                 ReadLayerBlendingRanges(layer, stream);
 
                 byte layerNameLength = stream.ReadByteOrThrow();
-                layer.Name = stream.ReadUsAsciiString(layerNameLength);
+                layer.Name = stream.ReadWindows1252String(layerNameLength);
                 int padTo4Bytes = 4 - ((layerNameLength + 1)%4);
                 if (padTo4Bytes != 4)  // there is zero padding if == 4
                 {

@@ -152,7 +152,7 @@ namespace RavuAlHemio.PSD
                 }
             }
 
-            public static void ReadLayerInformation(PSDFile psd, Stream stream)
+            public static void ReadLayerInformation(PSDFile psd, Stream stream, bool roundToFourBytes = false)
             {
                 long layerInfoLength = (psd.Version == 2)
                     ? stream.ReadBigEndianInt64()
@@ -163,6 +163,8 @@ namespace RavuAlHemio.PSD
                     psd.Layers = new PSDLayer[0];
                     return;
                 }
+
+                long layerInfoStart = stream.Position;
 
                 short layerCount = stream.ReadBigEndianInt16();
                 if (layerCount < 0)
@@ -178,6 +180,7 @@ namespace RavuAlHemio.PSD
                     PSDLayer.Reading.ReadLayerRecord(psd, psd.Layers[i], stream);
                 }
 
+                long totalDataLength = 0;
                 for (int l = 0; l < layerCount; ++l)
                 {
                     PSDLayer layer = psd.Layers[l];
@@ -198,25 +201,28 @@ namespace RavuAlHemio.PSD
                         {
                             Compression = compression,
                             Offset = stream.Position,
-                            DataLength = channel.DataLength
+                            DataLength = channel.DataLength - 2
                         };
 
-                        long dataLengthWithPadding = channel.DataLength;
-                        /*
-                        if (channel.DataLength%2 != 0)
-                        {
-                            ++dataLengthWithPadding;
-                        }
-                        */
+                        long dataLengthWithCompressionInfo = channel.DataLength;
+                        totalDataLength += dataLengthWithCompressionInfo;
 
                         // skip
-                        stream.Seek(dataLengthWithPadding-2, SeekOrigin.Current);
+                        stream.Seek(channel.Data.DataLength, SeekOrigin.Current);
                     }
                 }
 
-                // round up to 4 bytes
-                // FIXME: is this correct?
-                if (layerInfoLength % 4 != 0)
+                // skip padding if any
+                if (stream.Position < layerInfoStart + layerInfoLength)
+                {
+                    // padding; skip
+                    int skipBytes = (int)((layerInfoStart + layerInfoLength) - stream.Position);
+                    stream.ReadBytes(skipBytes);
+                }
+
+                // additionally round up to 4 bytes if requested (part of Layr/Lr16/Lr32)
+                // WARNING: spec is a liar; says "rounded up to an even byte count"
+                if (roundToFourBytes && layerInfoLength % 4 != 0)
                 {
                     var skipCount = (int)(4 - (layerInfoLength % 4));
                     stream.ReadBytes(skipCount);
@@ -277,7 +283,7 @@ namespace RavuAlHemio.PSD
                 if (key == "Layr" || key == "Lr16" || key == "Lr32")
                 {
                     // layer info has been shunted in here instead of where it belongs
-                    ReadLayerInformation(psd, stream);
+                    ReadLayerInformation(psd, stream, roundToFourBytes: true);
                     return null;
                 }
 
