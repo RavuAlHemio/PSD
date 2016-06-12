@@ -35,14 +35,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BitPacking.cs" />
+    <Compile Include="BlendMode.cs" />
     <Compile Include="ColorMode.cs" />
+    <Compile Include="CompressionType.cs" />
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="LayerMaskKind.cs" />
+    <Compile Include="PSDAdditionalLayerInformation.cs" />
     <Compile Include="PSDFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PSDFile.Reading.cs" />
     <Compile Include="PSDFormatException.cs" />
+    <Compile Include="PSDGlobalLayerMask.cs" />
+    <Compile Include="PSDImageDataPlaceholder.cs" />
     <Compile Include="PSDImageResource.cs" />
+    <Compile Include="PSDImageResource.Reading.cs" />
+    <Compile Include="PSDLayer.cs" />
+    <Compile Include="PSDLayerBlendingRange.cs" />
+    <Compile Include="PSDLayerChannel.cs" />
+    <Compile Include="PSDLayerChannelDataPlaceholder.cs" />
+    <Compile Include="PSDLayerMask.cs" />
     <Compile Include="ResolutionInfo.cs" />
     <Compile Include="StreamUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PSDLayer.Reading.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

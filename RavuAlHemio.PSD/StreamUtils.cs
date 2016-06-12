@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -22,6 +23,16 @@ namespace RavuAlHemio.PSD
             }
 
             return ret;
+        }
+
+        public static byte ReadByteOrThrow(this Stream stream)
+        {
+            int b = stream.ReadByte();
+            if (b == -1)
+            {
+                throw new EndOfStreamException();
+            }
+            return (byte) b;
         }
 
         public static ushort ReadBigEndianUInt16(this Stream stream)
@@ -150,11 +161,7 @@ namespace RavuAlHemio.PSD
         public static string ReadUsAsciiPascalStringPaddedToEven(this Stream stream)
         {
             // get length (1 byte)
-            int length = stream.ReadByte();
-            if (length == -1)
-            {
-                throw new EndOfStreamException();
-            }
+            byte length = stream.ReadByteOrThrow();
 
             // read that many bytes
             string str = stream.ReadUsAsciiString(length);
@@ -170,6 +177,34 @@ namespace RavuAlHemio.PSD
             }
 
             return str;
+        }
+
+        public static float ReadBigEndianSingle(this Stream stream)
+        {
+            uint bytesAsInteger = stream.ReadBigEndianUInt32();
+            byte[] bytesAsArray = BitConverter.GetBytes(bytesAsInteger);
+            return BitConverter.ToSingle(bytesAsArray, 0);
+        }
+
+        public static float ReadLittleEndianSingle(this Stream stream)
+        {
+            uint bytesAsInteger = stream.ReadLittleEndianUInt32();
+            byte[] bytesAsArray = BitConverter.GetBytes(bytesAsInteger);
+            return BitConverter.ToSingle(bytesAsArray, 0);
+        }
+
+        public static double ReadBigEndianDouble(this Stream stream)
+        {
+            ulong bytesAsInteger = stream.ReadBigEndianUInt64();
+            byte[] bytesAsArray = BitConverter.GetBytes(bytesAsInteger);
+            return BitConverter.ToDouble(bytesAsArray, 0);
+        }
+
+        public static double ReadLittleEndianDouble(this Stream stream)
+        {
+            ulong bytesAsInteger = stream.ReadLittleEndianUInt64();
+            byte[] bytesAsArray = BitConverter.GetBytes(bytesAsInteger);
+            return BitConverter.ToDouble(bytesAsArray, 0);
         }
     }
 }

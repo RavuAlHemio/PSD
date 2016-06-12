@@ -36,7 +36,7 @@ namespace PSDTests
 
             using (var validHeaderStream = new MemoryStream(GetValidHeader(), writable: false))
             {
-                image.ReadHeader(validHeaderStream);
+                PSDFile.Reading.ReadHeader(image, validHeaderStream);
                 Assert.Equal(1, image.Version);
                 Assert.Equal(4, image.NumberOfChannels);
                 Assert.Equal(32, image.Height);
@@ -57,7 +57,7 @@ namespace PSDTests
             header[3] = 0x4B;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -70,7 +70,7 @@ namespace PSDTests
             header[5] = 0x45;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -82,7 +82,7 @@ namespace PSDTests
             header[11] = 0x01;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -94,7 +94,7 @@ namespace PSDTests
             header[13] = 0x00;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -106,7 +106,7 @@ namespace PSDTests
             header[13] = 0x39;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -121,7 +121,7 @@ namespace PSDTests
             header[17] = 0x31;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
 
             var v2Image = new PSDFile();
@@ -133,7 +133,7 @@ namespace PSDTests
             v2Header[17] = 0x31;
             using (var v2HeaderStream = new MemoryStream(v2Header, writable: false))
             {
-                v2Image.ReadHeader(v2HeaderStream);
+                PSDFile.Reading.ReadHeader(v2Image, v2HeaderStream);
                 Assert.Equal(2, v2Image.Version);
                 Assert.Equal(4, v2Image.NumberOfChannels);
                 Assert.Equal(30001, v2Image.Height);
@@ -154,7 +154,7 @@ namespace PSDTests
             header[21] = 0x31;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
 
             var v2Image = new PSDFile();
@@ -166,7 +166,7 @@ namespace PSDTests
             v2Header[21] = 0x31;
             using (var v2HeaderStream = new MemoryStream(v2Header, writable: false))
             {
-                v2Image.ReadHeader(v2HeaderStream);
+                PSDFile.Reading.ReadHeader(v2Image, v2HeaderStream);
                 Assert.Equal(2, v2Image.Version);
                 Assert.Equal(4, v2Image.NumberOfChannels);
                 Assert.Equal(32, v2Image.Height);
@@ -188,7 +188,7 @@ namespace PSDTests
             header[17] = 0xE1;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -204,7 +204,7 @@ namespace PSDTests
             header[21] = 0xE1;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -216,7 +216,7 @@ namespace PSDTests
             header[23] = 0x02;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
 
@@ -228,7 +228,7 @@ namespace PSDTests
             header[25] = 0x05;
             using (var headerStream = new MemoryStream(header, writable: false))
             {
-                Assert.Throws<PSDFormatException>(() => image.ReadHeader(headerStream));
+                Assert.Throws<PSDFormatException>(() => PSDFile.Reading.ReadHeader(image, headerStream));
             }
         }
     }
