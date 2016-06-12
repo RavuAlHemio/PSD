@@ -10,19 +10,27 @@ namespace RavuAlHemio.PSD
         public static byte[] ReadBytes(this Stream stream, int byteCount)
         {
             var ret = new byte[byteCount];
-            int totalRead = 0;
+            stream.ReadBytes(ret);
+            return ret;
+        }
 
-            while (totalRead < byteCount)
+        public static void ReadBytes(this Stream stream, byte[] array, int offset = 0, int length = -1)
+        {
+            if (length == -1)
             {
-                int readNow = stream.Read(ret, totalRead, byteCount - totalRead);
+                length = array.Length;
+            }
+
+            int totalRead = 0;
+            while (totalRead < length)
+            {
+                int readNow = stream.Read(array, offset + totalRead, length - totalRead);
                 if (readNow == 0)
                 {
                     throw new EndOfStreamException();
                 }
                 totalRead += readNow;
             }
-
-            return ret;
         }
 
         public static byte ReadByteOrThrow(this Stream stream)

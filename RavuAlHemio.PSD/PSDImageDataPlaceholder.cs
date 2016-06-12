@@ -3,6 +3,6 @@
     public class PSDImageDataPlaceholder
     {
         public CompressionType Compression { get; set; }
-        public long DataLocation { get; set; }
+        public long Offset { get; set; }
     }
 }

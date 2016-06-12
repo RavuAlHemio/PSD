@@ -38,8 +38,11 @@
     <Compile Include="BlendMode.cs" />
     <Compile Include="ColorMode.cs" />
     <Compile Include="CompressionType.cs" />
+    <Compile Include="DeltaEncoding.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="LayerMaskKind.cs" />
+    <Compile Include="PartialStream.cs" />
+    <Compile Include="PixelDataDecoding.cs" />
     <Compile Include="PSDAdditionalLayerInformation.cs" />
     <Compile Include="PSDFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

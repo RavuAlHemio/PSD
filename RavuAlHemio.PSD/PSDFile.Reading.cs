@@ -329,7 +329,7 @@ namespace RavuAlHemio.PSD
                     throw new PSDFormatException($"unexpected compression type {compressionValue}, expected one of {string.Join(", ", EnumUtils.GetUnderlyingValues<CompressionType, short>())}");
                 }
                 placeholder.Compression = (CompressionType) compressionValue;
-                placeholder.DataLocation = stream.Position;
+                placeholder.Offset = stream.Position;
 
                 psd.PrecomposedImageData = placeholder;
             }

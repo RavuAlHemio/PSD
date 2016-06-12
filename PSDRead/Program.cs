@@ -97,7 +97,107 @@ namespace PSDRead
             }
             else
             {
-                Console.WriteLine("Precomposed image data: {0} from 0x{1:x}", psd.PrecomposedImageData.Compression, psd.PrecomposedImageData.DataLocation);
+                Console.WriteLine("Precomposed image data: {0} from 0x{1:x}", psd.PrecomposedImageData.Compression, psd.PrecomposedImageData.Offset);
+            }
+
+            if (args.Length > 1 && args[1] == "-d")
+            {
+                // decode
+                for (int l = 0; l < psd.Layers.Length; ++l)
+                {
+                    PSDLayer layer = psd.Layers[l];
+                    foreach (PSDLayerChannel chan in layer.Channels)
+                    {
+                        Console.WriteLine("extracting layer {0} channel {1} ({2})", l, chan.ID, chan.Data.Compression);
+                        string name = $"{args[0]}.l{l}c{chan.ID}.bin";
+
+                        using (var reader = new FileStream(args[0], FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var writer = new FileStream(name, FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            reader.Seek(chan.Data.Offset, SeekOrigin.Begin);
+                            switch (chan.Data.Compression)
+                            {
+                                case CompressionType.RawData:
+                                    PixelDataDecoding.DecodeRawData(
+                                        reader,
+                                        writer,
+                                        chan.Data.DataLength
+                                    );
+                                    break;
+                                case CompressionType.PackBits:
+                                    PixelDataDecoding.DecodePackBits(
+                                        reader,
+                                        writer,
+                                        chan.Data.DataLength,
+                                        scanlineCount: layer.Bottom-layer.Top,
+                                        fourByteLengths: psd.Version == 2
+                                    );
+                                    break;
+                                case CompressionType.ZipWithoutPrediction:
+                                    PixelDataDecoding.DecodeZip(
+                                        reader,
+                                        writer,
+                                        chan.Data.DataLength
+                                    );
+                                    break;
+                                case CompressionType.ZipWithPrediction:
+                                    PixelDataDecoding.DecodeZipPredicted(
+                                        reader,
+                                        writer,
+                                        chan.Data.DataLength,
+                                        psd.Depth,
+                                        psd.Width
+                                    );
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                if (psd.PrecomposedImageData != null)
+                {
+                    string compositeName = $"{args[0]}.composite.bin";
+                    using (var reader = new FileStream(args[0], FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var writer = new FileStream(compositeName, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        reader.Seek(psd.PrecomposedImageData.Offset, SeekOrigin.Begin);
+                        switch (psd.PrecomposedImageData.Compression)
+                        {
+                            case CompressionType.RawData:
+                                PixelDataDecoding.DecodeRawData(
+                                    reader,
+                                    writer,
+                                    length: null
+                                );
+                                break;
+                            case CompressionType.PackBits:
+                                PixelDataDecoding.DecodePackBits(
+                                    reader,
+                                    writer,
+                                    length: null,
+                                    scanlineCount: psd.Height * psd.NumberOfChannels,
+                                    fourByteLengths: psd.Version == 2
+                                );
+                                break;
+                            case CompressionType.ZipWithoutPrediction:
+                                PixelDataDecoding.DecodeZip(
+                                    reader,
+                                    writer,
+                                    length: null
+                                );
+                                break;
+                            case CompressionType.ZipWithPrediction:
+                                PixelDataDecoding.DecodeZipPredicted(
+                                    reader,
+                                    writer,
+                                    length: null,
+                                    depth: psd.Depth,
+                                    imageWidth: psd.Width
+                                );
+                                break;
+                        }
+                    }
+                }
             }
         }
     }
