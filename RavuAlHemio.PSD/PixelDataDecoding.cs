@@ -61,6 +61,12 @@ namespace RavuAlHemio.PSD
             }
         }
 
+        public static void DecodePackBits(Stream source, Stream dest, PSDFile psd)
+        {
+            int scanlineCount = psd.Height * psd.NumberOfChannels;
+            DecodePackBits(source, dest, null, scanlineCount, psd.Version == 2);
+        }
+
         public static void DecodeZip(Stream source, Stream dest, long? length)
         {
             Stream actualSource = length.HasValue
@@ -118,6 +124,14 @@ namespace RavuAlHemio.PSD
                     }
                 }
             }
+        }
+
+        /// <remarks>
+        /// <paramref name="source"/> must already be at the correct position.
+        /// </remarks>
+        public static void DecodeZipPredicted(Stream source, Stream dest, PSDFile psd)
+        {
+            DecodeZipPredicted(source, dest, null, psd.Depth, psd.Width);
         }
     }
 }
