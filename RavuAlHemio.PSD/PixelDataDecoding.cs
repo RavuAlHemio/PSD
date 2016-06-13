@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 
 namespace RavuAlHemio.PSD
 {
     public static class PixelDataDecoding
     {
-        public static void DecodeRawData(Stream source, Stream dest, long? length)
+        public const int BufferSize = 8*1024*1024;
+
+        public static void DecodeRawData(Stream source, Stream dest, long? length,
+            CancellationToken cancelToken = default(CancellationToken))
         {
-            const int bufSize = 8192;
-            var buf = new byte[bufSize];
+            var buf = new byte[BufferSize];
             long totalCopied = 0;
 
             while (!length.HasValue || totalCopied < length.Value)
@@ -34,10 +37,13 @@ namespace RavuAlHemio.PSD
                 }
                 dest.Write(buf, 0, read);
                 totalCopied += read;
+                
+                cancelToken.ThrowIfCancellationRequested();
             }
         }
 
-        public static void DecodePackBits(Stream source, Stream dest, long? length, int scanlineCount, bool fourByteLengths)
+        public static void DecodePackBits(Stream source, Stream dest, long? length, int scanlineCount,
+            bool fourByteLengths, CancellationToken cancelToken = default(CancellationToken))
         {
             var scanlineDataLengths = new int[scanlineCount];
             for (int i = 0; i < scanlineCount; ++i)
@@ -51,6 +57,11 @@ namespace RavuAlHemio.PSD
             var outMule = new List<byte>();
             for (int i = 0; i < scanlineCount; ++i)
             {
+                if (i%64 == 0)
+                {
+                    cancelToken.ThrowIfCancellationRequested();
+                }
+
                 int thisScanlineLength = scanlineDataLengths[i];
                 source.ReadBytes(inMule, 0, thisScanlineLength);
                 outMule.AddRange(BitPacking.UnpackBits(inMule.Take(thisScanlineLength)));
@@ -61,13 +72,18 @@ namespace RavuAlHemio.PSD
             }
         }
 
-        public static void DecodePackBits(Stream source, Stream dest, PSDFile psd)
+        /// <remarks>
+        /// <paramref name="source"/> must already be at the correct position.
+        /// </remarks>
+        public static void DecodePackBits(Stream source, Stream dest, PSDFile psd,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             int scanlineCount = psd.Height * psd.NumberOfChannels;
-            DecodePackBits(source, dest, null, scanlineCount, psd.Version == 2);
+            DecodePackBits(source, dest, null, scanlineCount, psd.Version == 2, cancelToken);
         }
 
-        public static void DecodeZip(Stream source, Stream dest, long? length)
+        public static void DecodeZip(Stream source, Stream dest, long? length,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             Stream actualSource = length.HasValue
                 ? new PartialStream(source, source.Position, length.Value)
@@ -78,16 +94,17 @@ namespace RavuAlHemio.PSD
 
             using (var inflater = new DeflateStream(actualSource, CompressionMode.Decompress, leaveOpen: true))
             {
-                inflater.CopyTo(dest);
+                inflater.CopyToAsync(dest, BufferSize, cancelToken).Wait(cancelToken);
             }
         }
 
-        public static void DecodeZipPredicted(Stream source, Stream dest, long? length, int depth, int imageWidth)
+        public static void DecodeZipPredicted(Stream source, Stream dest, long? length, int depth, int imageWidth,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             if (depth == 1 || depth == 8)
             {
                 // no prediction here
-                DecodeZip(source, dest, length);
+                DecodeZip(source, dest, length, cancelToken);
                 return;
             }
 
@@ -122,6 +139,8 @@ namespace RavuAlHemio.PSD
                         DeltaEncoding.DeltaDecodeBigEndian32(buf);
                         dest.Write(buf, 0, buf.Length);
                     }
+
+                    cancelToken.ThrowIfCancellationRequested();
                 }
             }
         }
@@ -129,9 +148,10 @@ namespace RavuAlHemio.PSD
         /// <remarks>
         /// <paramref name="source"/> must already be at the correct position.
         /// </remarks>
-        public static void DecodeZipPredicted(Stream source, Stream dest, PSDFile psd)
+        public static void DecodeZipPredicted(Stream source, Stream dest, PSDFile psd,
+            CancellationToken cancelToken = default(CancellationToken))
         {
-            DecodeZipPredicted(source, dest, null, psd.Depth, psd.Width);
+            DecodeZipPredicted(source, dest, null, psd.Depth, psd.Width, cancelToken);
         }
     }
 }
