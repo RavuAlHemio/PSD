@@ -6,10 +6,29 @@ namespace RavuAlHemio.PSD
 {
     public partial class PSDLayer
     {
+        /// <summary>
+        /// Contains methods decoding layer records and related information.
+        /// </summary>
         public static class Reading
         {
+            /// <summary>
+            /// The signature preceding a blend mode specification.
+            /// </summary>
+            /// <remarks>
+            /// Same as <see cref="PSDFile.Reading.AdditionalLayerInfoSignature" />.
+            /// </remarks>
             internal const string BlendModeSignature = "8BIM";
 
+            /// <summary>
+            /// Reads a layer record from a stream and populates a PSD layer object with the information.
+            /// </summary>
+            /// <param name="psd">
+            /// The PSD file being read. Used to obtain the file format version and to populate the
+            /// <see cref="PSDFile.Layers"/> array if general layer information has been "outsourced" to an additional
+            /// layer information block.
+            /// </param>
+            /// <param name="layer">The layer to populate with information read from the stream.</param>
+            /// <param name="stream">The stream from which to read layer information.</param>
             public static void ReadLayerRecord(PSDFile psd, PSDLayer layer, Stream stream)
             {
                 layer.Top = stream.ReadBigEndianInt32();
@@ -103,6 +122,11 @@ namespace RavuAlHemio.PSD
                 }
             }
 
+            /// <summary>
+            /// Reads information of a PSD layer's mask from a stream.
+            /// </summary>
+            /// <param name="layer">The layer whose mask is being read.</param>
+            /// <param name="stream">The stream from which to read the layer mask.</param>
             public static void ReadLayerMask(PSDLayer layer, Stream stream)
             {
                 int maskSize = stream.ReadBigEndianInt32();
@@ -194,6 +218,11 @@ namespace RavuAlHemio.PSD
                 stream.ReadBytes(18);
             }
 
+            /// <summary>
+            /// Reads the blending ranges of a layer from a stream and store them in a PSD layer object.
+            /// </summary>
+            /// <param name="layer">The layer whose mask is being read.</param>
+            /// <param name="stream">The stream from which to read the layer mask.</param>
             public static void ReadLayerBlendingRanges(PSDLayer layer, Stream stream)
             {
                 int length = stream.ReadBigEndianInt32();

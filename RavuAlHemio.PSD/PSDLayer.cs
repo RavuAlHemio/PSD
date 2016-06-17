@@ -8,22 +8,25 @@ namespace RavuAlHemio.PSD
     public partial class PSDLayer
     {
         /// <summary>
-        /// The difference in pixels between the top edge of the layer and the top edge of the image.
+        /// The top offset in pixels, as a difference between the top edge of the layer and the top edge of the image.
         /// </summary>
         public int Top { get; set; }
 
         /// <summary>
-        /// The difference in pixels between the left edge of the layer and the left edge of the image.
+        /// The left offset in pixels, as a difference between the left edge of the layer and the left edge of the
+        /// image.
         /// </summary>
         public int Left { get; set; }
 
         /// <summary>
-        /// The difference in pixels between the bottom edge of the layer and the bottom edge of the image.
+        /// The bottom offset in pixels, as a difference between the bottom edge of the layer and the bottom edge of
+        /// the image.
         /// </summary>
         public int Bottom { get; set; }
 
         /// <summary>
-        /// The difference in pixels between the right edge of the layer and the right edge of the image.
+        /// The right offset in pixels, as a difference between the right edge of the layer and the right edge of the
+        /// image.
         /// </summary>
         public int Right { get; set; }
 
