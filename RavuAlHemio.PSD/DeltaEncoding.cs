@@ -1,10 +1,18 @@
 ﻿using System;
-using System.IO;
 
 namespace RavuAlHemio.PSD
 {
+    /// <summary>
+    /// Utility functions pertaining to delta-encoding.
+    /// </summary>
     public static class DeltaEncoding
     {
+        /// <summary>
+        /// Reverses delta-encoding in place on the big-endian 16-bit integer values stored as a byte array.
+        /// </summary>
+        /// <param name="bytes">
+        /// The byte array containing big-endian 16-bit integer values whose delta-encoding to reverse.
+        /// </param>
         public static void DeltaDecodeBigEndian16(byte[] bytes)
         {
             if (bytes.Length%2 != 0)
@@ -35,6 +43,12 @@ namespace RavuAlHemio.PSD
             }
         }
 
+        /// <summary>
+        /// Reverses delta-encoding in place on the big-endian 32-bit integer values stored as a byte array.
+        /// </summary>
+        /// <param name="bytes">
+        /// The byte array containing big-endian 32-bit integer values whose delta-encoding to reverse.
+        /// </param>
         public static void DeltaDecodeBigEndian32(byte[] bytes)
         {
             if (bytes.Length % 4 != 0)

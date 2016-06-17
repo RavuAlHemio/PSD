@@ -3,12 +3,32 @@ using System.IO;
 
 namespace RavuAlHemio.PSD
 {
+    /// <summary>
+    /// A stream which wraps a finite section of another stream.
+    /// </summary>
     public class PartialStream : Stream
     {
+        /// <summary>
+        /// The stream underlying this stream.
+        /// </summary>
         public Stream UnderlyingStream { get; }
+
+        /// <summary>
+        /// The position of the underlying stream that is the initial position of this partial stream.
+        /// </summary>
         public long PartialStart { get; }
+
+        /// <summary>
+        /// The length of this partial stream.
+        /// </summary>
         public long PartialLength { get; }
 
+        /// <summary>
+        /// Initializes a partial stream with an underlying stream, a starting position and a length.
+        /// </summary>
+        /// <param name="underlying">The underlying stream.</param>
+        /// <param name="start">The starting position relative to the start of the underlying stream.</param>
+        /// <param name="length">The length of this stream.</param>
         public PartialStream(Stream underlying, long start, long length)
         {
             UnderlyingStream = underlying;

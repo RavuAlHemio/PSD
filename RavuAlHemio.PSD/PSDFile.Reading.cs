@@ -7,12 +7,31 @@ namespace RavuAlHemio.PSD
 {
     public partial class PSDFile
     {
+        /// <summary>
+        /// Contains methods decoding the PSD format.
+        /// </summary>
         public static class Reading
         {
-            internal const string Magic = "8BPS";
-            internal const string AdditionalLayerInfoSignature = "8BIM";
-            internal const string AdditionalLayerInfoSignature2 = "8B64";
+            /// <summary>
+            /// The magic four bytes identifying Photoshop files.
+            /// </summary>
+            public const string Magic = "8BPS";
 
+            /// <summary>
+            /// Magic four bytes identifying additional layer info blocks.
+            /// </summary>
+            public const string AdditionalLayerInfoSignature = "8BIM";
+
+            /// <summary>
+            /// Alternative magic four bytes identifying additional layer info blocks.
+            /// </summary>
+            public const string AdditionalLayerInfoSignature2 = "8B64";
+
+            /// <summary>
+            /// Reads the PSD header from a stream and populates a <see cref="PSDFile"/> with the information.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the PSD header.</param>
             public static void ReadHeader(PSDFile psd, Stream stream)
             {
                 string magic = stream.ReadUsAsciiString(4);
@@ -91,7 +110,12 @@ namespace RavuAlHemio.PSD
                 }
                 psd.ColorMode = (ColorMode) colorMode;
             }
-
+            
+            /// <summary>
+            /// Reads PSD color mode data from a stream and populates a <see cref="PSDFile"/> with the information.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the PSD color mode data.</param>
             public static void ReadColorModeData(PSDFile psd, Stream stream)
             {
                 int colorModeDataLength = stream.ReadBigEndianInt32();
@@ -110,6 +134,11 @@ namespace RavuAlHemio.PSD
                 psd.ColorModeData = stream.ReadBytes(colorModeDataLength);
             }
 
+            /// <summary>
+            /// Reads the PSD image resources from a stream and populates a <see cref="PSDFile"/> with the information.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the PSD image resources.</param>
             public static void ReadImageResources(PSDFile psd, Stream stream)
             {
                 int imageResourceSectionLength = stream.ReadBigEndianInt32();
@@ -130,6 +159,12 @@ namespace RavuAlHemio.PSD
                 }
             }
 
+            /// <summary>
+            /// Reads PSD layer and mask information from a stream and populates a <see cref="PSDFile"/> with the
+            /// information.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the PSD layer and mask information.</param>
             public static void ReadLayerAndMaskInformation(PSDFile psd, Stream stream)
             {
                 long layerMaskInfoLength = (psd.Version == 2)
@@ -152,6 +187,15 @@ namespace RavuAlHemio.PSD
                 }
             }
 
+            /// <summary>
+            /// Reads the layer information subsection of a PSD layer and mask information section from a stream and
+            /// populates a <see cref="PSDFile"/> with the information.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the layer information subsection.</param>
+            /// <param name="roundToFourBytes">
+            /// Whether the layer information block is padded to a multiple of 4 bytes.
+            /// </param>
             public static void ReadLayerInformation(PSDFile psd, Stream stream, bool roundToFourBytes = false)
             {
                 long layerInfoLength = (psd.Version == 2)
@@ -229,6 +273,12 @@ namespace RavuAlHemio.PSD
                 }
             }
 
+            /// <summary>
+            /// Reads the global mask information subsection of a PSD layer and mask information section from a stream
+            /// and populates a <see cref="PSDFile"/> with the information.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the layer information subsection.</param>
             public static void ReadGlobalMaskInformation(PSDFile psd, Stream stream)
             {
                 int length = stream.ReadBigEndianInt32();
@@ -267,6 +317,21 @@ namespace RavuAlHemio.PSD
                 psd.GlobalLayerMask = mask;
             }
 
+            /// <summary>
+            /// Reads an item of additional layer information within the additional layer information subsection of a
+            /// PSD layer and mask information section from a stream and either returns a
+            /// <see cref="PSDAdditionalLayerInformation"/> object containing the additional information, or (if this
+            /// is an "out-of-band" layer information block) populates a <see cref="PSDFile"/> with the layer
+            /// information within.
+            /// </summary>
+            /// <param name="psd">
+            /// The PSD file object to populate if this is an "out-of-band" layer information block.
+            /// </param>
+            /// <param name="stream">The stream from which to read the layer information subsection.</param>
+            /// <returns>
+            /// The additional layer information, or <c>null</c> if the encountered block is an "out-of-band" layer
+            /// information block.
+            /// </returns>
             public static PSDAdditionalLayerInformation ReadAdditionalLayerInformation(PSDFile psd, Stream stream)
             {
                 var ali = new PSDAdditionalLayerInformation();
@@ -324,6 +389,11 @@ namespace RavuAlHemio.PSD
                 return ali;
             }
 
+            /// <summary>
+            /// Reads metadata about a PSD file's precomposed image data and populates a <see cref="PSDFile"/> with it.
+            /// </summary>
+            /// <param name="psd">The PSD file object to populate.</param>
+            /// <param name="stream">The stream from which to read the precomposed image data metadata.</param>
             public static void CreateImageDataPlaceholder(PSDFile psd, Stream stream)
             {
                 var placeholder = new PSDImageDataPlaceholder();

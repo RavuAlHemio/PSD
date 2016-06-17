@@ -3,8 +3,16 @@ using System.IO;
 
 namespace RavuAlHemio.PSD
 {
+    /// <summary>
+    /// Utility functions pertaining to the PackBits run-length encoding scheme.
+    /// </summary>
     public static class BitPacking
     {
+        /// <summary>
+        /// Reads PackBits-encoded data and returns it in its unpacked form.
+        /// </summary>
+        /// <param name="bitsToUnpack">An <see cref="IEnumerable{T}"/> of PackBits-encoded bytes.</param>
+        /// <returns>The unpacked bytes.</returns>
         public static IEnumerable<byte> UnpackBits(IEnumerable<byte> bitsToUnpack)
         {
             var numera = bitsToUnpack.GetEnumerator();

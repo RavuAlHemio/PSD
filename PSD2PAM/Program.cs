@@ -104,7 +104,7 @@ namespace PSD2PAM
                                 break;
                             case CompressionType.PackBits:
                                 int scanlineCount = height * channelCount;
-                                PixelDataDecoding.DecodePackBits(reading, zippage, null, scanlineCount, photochop.Version == 2);
+                                PixelDataDecoding.DecodePackBits(reading, zippage, scanlineCount, photochop.Version == 2);
                                 break;
                             case CompressionType.ZipWithoutPrediction:
                                 PixelDataDecoding.DecodeZip(reading, zippage, null);

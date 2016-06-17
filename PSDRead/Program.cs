@@ -137,7 +137,6 @@ namespace PSDRead
                                     PixelDataDecoding.DecodePackBits(
                                         reader,
                                         writer,
-                                        chan.Data.DataLength,
                                         scanlineCount: layer.Bottom-layer.Top,
                                         fourByteLengths: psd.Version == 2
                                     );
@@ -183,7 +182,6 @@ namespace PSDRead
                                 PixelDataDecoding.DecodePackBits(
                                     reader,
                                     writer,
-                                    length: null,
                                     scanlineCount: psd.Height * psd.NumberOfChannels,
                                     fourByteLengths: psd.Version == 2
                                 );

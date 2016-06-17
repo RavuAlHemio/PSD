@@ -7,6 +7,12 @@ namespace RavuAlHemio.PSD
     {
         public static class Reading
         {
+            /// <summary>
+            /// Reads a PSD image resource from a stream and populates a <see cref="PSDImageResource"/> with the
+            /// information.
+            /// </summary>
+            /// <param name="resource">The PSD image resource object to populate.</param>
+            /// <param name="stream">The stream from which to read the PSD resource.</param>
             public static void ReadResourceBlock(PSDImageResource resource, Stream stream)
             {
                 string magic = stream.ReadUsAsciiString(4);

@@ -1,5 +1,8 @@
 ﻿namespace RavuAlHemio.PSD
 {
+    /// <summary>
+    /// The mode using which this layer is blended with the layer below it.
+    /// </summary>
     public enum BlendMode : int
     {
         // "pass"
