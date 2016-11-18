@@ -9,13 +9,12 @@ namespace PSD2PAM
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             if (args.Length < 1)
             {
                 Console.WriteLine("Usage: PSD2PAM.exe FILE.psd FILE.pam");
-                Environment.ExitCode = 1;
-                return;
+                return 1;
             }
 
             // read the PSD file
@@ -29,8 +28,7 @@ namespace PSD2PAM
                 {
                     // does not have valid precomposed image
                     Console.WriteLine("PSD2PAM requires that a valid precomposed image is part of the file.");
-                    Environment.ExitCode = 1;
-                    return;
+                    return 1;
                 }
 
                 int width = photochop.Width;
@@ -40,8 +38,7 @@ namespace PSD2PAM
                 if (depth == 1)
                 {
                     Console.WriteLine("PSD2PAM doesn't currently support 1-bit images.");
-                    Environment.ExitCode = 1;
-                    return;
+                    return 1;
                 }
 
                 long maxValue;
@@ -58,8 +55,7 @@ namespace PSD2PAM
                         break;
                     default:
                         Console.WriteLine("Unsupported depth {0}.", depth);
-                        Environment.ExitCode = 1;
-                        return;
+                        return 1;
                 }
 
                 int bytesPerColorComponent = depth/8;
@@ -198,6 +194,8 @@ namespace PSD2PAM
                     }
                 }
             }
+
+            return 0;
         }
     }
 }
